@@ -1,4 +1,4 @@
- 🌍 Travel Buddy
+## 🌍 Travel Buddy
 
 A full‑stack *Travel Buddy Matching & Chat Application* that helps users find like‑minded travel partners based on interests and preferences, with real‑time chat support.
 
