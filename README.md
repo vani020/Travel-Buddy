@@ -85,7 +85,7 @@ Travel Buddy/
 To get a local copy of the project, clone the repository using Git:
 
 bash
-git clone https://github.com/r20j/travel-buddy.git
+git clone https://github.com/vani020/travel-buddy.git
 
 
 Navigate into the project folder:
