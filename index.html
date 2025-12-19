@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Buddy - Your Perfect Travel Companion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+        .match-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            object-position: center;
+        }
+        .chat-image {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            object-position: center;
+        }
+        .active-filter {
+            background-color: #13a4ec;
+            color: white;
+        }
+        .chat-list-item {
+            transition: all 0.3s ease;
+        }
+        .chat-list-item:hover {
+            background-color: #f3f4f6;
+        }
+        .chat-list-item.active {
+            background-color: #e0f2fe;
+        }
+        .message-typing {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #9ca3af;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        @keyframes typing {
+            0%, 60%, 100% { transform: scale(1); opacity: 0.5; }
+            30% { transform: scale(1.2); opacity: 1; }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { 
+                        primary: "#13a4ec", 
+                        "background-light": "#f6f7f8", 
+                        "background-dark": "#101c22" 
+                    },
+                    fontFamily: { display: ["Plus Jakarta Sans"] },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+    <!-- Main Container -->
+    <div id="app" class="min-h-screen">
+        <!-- Landing Page -->
+        <div id="landingPage" class="h-screen w-full bg-cover bg-center flex items-center justify-center" 
+            style="background-image: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');">
+            <div class="bg-black/40 p-8 rounded-lg text-center max-w-2xl mx-4 slide-up">
+                <h1 class="text-5xl font-extrabold text-white mb-4">Your Perfect Travel Companion</h1>
+                <p class="text-lg text-gray-200 mb-6">Find like-minded adventurers to explore the world with. Connect, plan, and embark on unforgettable journeys together.</p>
+                <button onclick="showAuthPage()" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition text-lg font-medium bounce">Get Started</button>
+                <p class="text-gray-300 mt-4">Already have an account? <button onclick="showAuthPage()" class="text-white font-medium underline">Log in here</button></p>
+            </div>
+        </div>
+
+        <!-- Authentication Page -->
+        <div id="authPage" class="hidden min-h-screen flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-gray-900 p-8 rounded-lg w-full max-w-md shadow-lg slide-up">
+                <button onclick="showPage('landingPage')" class="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-6 hover:text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Back to Home
+                </button>
+                
+                <h2 class="text-2xl font-bold mb-6 text-center">Join Travel Buddy</h2>
+                
+                <!-- Tabs for Login/Signup -->
+                <div class="flex mb-6 border-b border-gray-200 dark:border-gray-700">
+                    <button id="loginTab" class="flex-1 py-2 font-medium text-primary border-b-2 border-primary">Login</button>
+                    <button id="signupTab" class="flex-1 py-2 font-medium text-gray-500 dark:text-gray-400">Sign Up</button>
+                </div>
+                
+                <!-- Login Form -->
+                <div id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block mb-1 font-medium">Email</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" class="w-full p-3 rounded border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                    </div>
+                    <div>
+                        <label class="block mb-1 font-medium">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" class="w-full p-3 rounded border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                    </div>
+                    <button onclick="login()" class="w-full bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary/90 font-medium">Login</button>
+                    <p class="text-center text-sm text-gray-600 dark:text-gray-400">Don't have an account? <button onclick="switchToSignup()" class="text-primary font-medium">Sign up</button></p>
+                </div>
+                
+                <!-- Signup Form -->
+                <div id="signupForm" class="hidden space-y-4">
+                    <div>
+                        <label class="block mb-1 font-medium">Full Name</label>
+                        <input type="text" id="signupName" placeholder="Enter your full name" class="w-full p-3 rounded border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                    </div>
+                    <div>
+                        <label class="block mb-1 font-medium">Email</label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email" class="w-full p-3 rounded border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                    </div>
+                    <div>
+                        <label class="block mb-1 font-medium">Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password" class="w-full p-3 rounded border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                    </div>
+                    <div>
+                        <label class="block mb-1 font-medium">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" class="w-full p-3 rounded border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                    </div>
+                    <button onclick="signup()" class="w-full bg-primary text-white px-4 py-3 rounded-lg hover:bg-primary/90 font-medium">Create Account</button>
+                    <p class="text-center text-sm text-gray-600 dark:text-gray-400">Already have an account? <button onclick="switchToLogin()" class="text-primary font-medium">Login</button></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App Layout with Sidebar -->
+        <div id="mainApp" class="hidden min-h-screen">
+            <!-- Sidebar -->
+            <div class="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 shadow-lg z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300" id="sidebar">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        <span class="font-bold text-xl">Travel Buddy</span>
+                    </div>
+                </div>
+
+                <nav class="p-4 space-y-2">
+                    <button onclick="showPage('profilePage')" class="w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                        </svg>
+                        Profile
+                    </button>
+                    <button onclick="showPage('matchesPage')" class="w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd" />
+                        </svg>
+                        Find Matches
+                    </button>
+                    <button onclick="showPage('chatsPage')" class="w-full text-left p-3 rounded-lg bg-primary/10 text-primary font-medium flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
+                        </svg>
+                        Messages
+                    </button>
+                </nav>
+
+                <div class="absolute bottom-4 left-4 right-4">
+                    <button onclick="logout()" class="w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-3 text-red-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile menu button -->
+            <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <!-- Main Content -->
+            <div class="md:ml-64 min-h-screen">
+                <!-- Profile Page -->
+                <div id="profilePage" class="p-6">
+                    <h1 class="text-3xl font-bold mb-6">Complete Your Profile</h1>
+                    <form id="profileForm" class="space-y-6 bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block mb-2 font-medium">Full Name</label>
+                                <input type="text" id="full-name" placeholder="Enter your full name" class="w-full rounded border-gray-300 dark:border-gray-700 p-3 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                            </div>
+                            <div>
+                                <label class="block mb-2 font-medium">Age</label>
+                                <input type="number" id="age" placeholder="Your age" class="w-full rounded border-gray-300 dark:border-gray-700 p-3 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block mb-2 font-medium">Current Location</label>
+                            <input type="text" id="location" placeholder="City, Country" class="w-full rounded border-gray-300 dark:border-gray-700 p-3 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                        </div>
+                        
+                        <div>
+                            <label class="block mb-2 font-medium">Destination</label>
+                            <input type="text" id="destination" placeholder="Where do you want to travel?" class="w-full rounded border-gray-300 dark:border-gray-700 p-3 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block mb-2 font-medium">Travel Dates</label>
+                                <input type="date" id="travel-date" class="w-full rounded border-gray-300 dark:border-gray-700 p-3 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"/>
+                            </div>
+                            <div>
+                                <label class="block mb-2 font-medium">Travel Style</label>
+                                <select id="travel-style" class="w-full rounded border-gray-300 dark:border-gray-700 p-3 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">Select Travel Style</option>
+                                    <option value="Adventurer">Adventurer</option>
+                                    <option value="Chill">Chill & Relaxed</option>
+                                    <option value="Foodie">Foodie</option>
+                                    <option value="Cultural">Cultural Explorer</option>
+                                    <option value="Explorer">Urban Explorer</option>
+                                    <option value="Backpacker">Budget Backpacker</option>
+                                    <option value="Luxury">Luxury Traveler</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block mb-2 font-medium">Interests</label>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                                    <input type="checkbox" value="Hiking" class="rounded text-primary focus:ring-primary"/> Hiking
+                                </label>
+                                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                                    <input type="checkbox" value="Photography" class="rounded text-primary focus:ring-primary"/> Photography
+                                </label>
+                                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                                    <input type="checkbox" value="Food Tasting" class="rounded text-primary focus:ring-primary"/> Food Tasting
+                                </label>
+                                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                                    <input type="checkbox" value="Museums" class="rounded text-primary focus:ring-primary"/> Museums
+                                </label>
+                                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                                    <input type="checkbox" value="City Exploration" class="rounded text-primary focus:ring-primary"/> City Exploration
+                                </label>
+                                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                                    <input type="checkbox" value="Beaches" class="rounded text-primary focus:ring-primary"/> Beaches
+                                </label>
+                                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                                    <input type="checkbox" value="Nightlife" class="rounded text-primary focus:ring-primary"/> Nightlife
+                                </label>
+                                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                                    <input type="checkbox" value="Shopping" class="rounded text-primary focus:ring-primary"/> Shopping
+                                </label>
+                                <label class="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                                    <input type="checkbox" value="Nature" class="rounded text-primary focus:ring-primary"/> Nature
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block mb-2 font-medium">Short Bio</label>
+                            <textarea id="short-bio" rows="4" placeholder="Tell us about yourself, your travel preferences, and what you're looking for in a travel buddy..." class="w-full rounded border-gray-300 dark:border-gray-700 p-3 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 font-medium text-lg">Save Profile & Find Matches</button>
+                    </form>
+                </div>
+
+                <!-- Find Matches Page -->
+                <div id="matchesPage" class="hidden p-6">
+                    <h1 class="text-3xl font-bold mb-2">Find Your Travel Match</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">Based on your profile, we've found these potential travel buddies for you.</p>
+                    
+                    <div class="mb-6 flex flex-wrap gap-2">
+                        <button id="filterAll" class="bg-primary text-white px-4 py-2 rounded-full text-sm active-filter" onclick="filterMatches('all')">All</button>
+                        <button id="filterDestination" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-full text-sm hover:bg-gray-300 dark:hover:bg-gray-600" onclick="filterMatches('destination')">Same Destination</button>
+                        <button id="filterDates" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-full text-sm hover:bg-gray-300 dark:hover:bg-gray-600" onclick="filterMatches('dates')">Same Date</button>
+                    </div>
+                    
+                    <div id="matchProfiles" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </div>
+
+                <!-- Chats List Page -->
+                <div id="chatsPage" class="hidden p-6">
+                    <h1 class="text-3xl font-bold mb-6">Messages</h1>
+                    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-md">
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                            <h2 class="text-lg font-semibold">Your Conversations</h2>
+                        </div>
+                        <div id="chatsList" class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Chat list will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Individual Chat Page -->
+                <div id="chatPage" class="hidden h-screen flex flex-col">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center gap-3">
+                        <button onclick="showPage('chatsPage')" class="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <img id="chatUserImage" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="User" class="chat-image rounded-full">
+                        <div>
+                            <h2 id="chatUserName" class="font-semibold">Michael Brown</h2>
+                            <p id="chatUserInfo" class="text-sm text-gray-500 dark:text-gray-400">Traveling to Rome, Italy • Adventurer</p>
+                        </div>
+                    </div>
+                    
+                    <div id="chatBox" class="flex-1 p-4 overflow-y-auto bg-gray-50 dark:bg-gray-800 space-y-4">
+                        <!-- Messages will be inserted here -->
+                    </div>
+                    
+                    <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                        <div class="flex gap-2">
+                            <input id="messageInput" placeholder="Type a message..." 
+                                class="flex-1 rounded border border-gray-300 dark:border-gray-700 p-3 bg-background-light dark:bg-background-dark text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                                onkeypress="if(event.key === 'Enter') sendMessage()"/>
+                            <button onclick="sendMessage()" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 font-medium">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+    // Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDNYVcB9b1YdUZN5GujLig8et95VPIE9Zw",
+    authDomain: "travel-buddy-website.firebaseapp.com",
+    projectId: "travel-buddy-website",
+    storageBucket: "travel-buddy-website.firebasestorage.app",
+    messagingSenderId: "900364159765",
+    appId: "1:900364159765:web:6af1beb72506af7015771c",
+    measurementId: "G-BGN23DE8HP"
+};
+
+// Initialize Firebase (using compatibility version)
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+// Current user data
+let currentUser = null;
+let currentChatWith = null;
+let currentFilter = 'all';
+let mlMatches = [];
+let allMatches = [];
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', function() {
+    showPage('landingPage');
+
+    // Set up form submissions
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveProfile();
+    });
+
+    // Set up tab switching
+    document.getElementById('loginTab').addEventListener('click', switchToLogin);
+    document.getElementById('signupTab').addEventListener('click', switchToSignup);
+
+    // Mobile menu toggle
+    document.getElementById('mobileMenuButton').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('-translate-x-full');
+    });
+
+    // Check if user is already logged in
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            getUserData(user.uid);
+        }
+    });
+});
+
+// Page navigation functions
+function showPage(pageId) {
+    // Hide all pages
+    document.getElementById('landingPage').classList.add('hidden');
+    document.getElementById('authPage').classList.add('hidden');
+    document.getElementById('mainApp').classList.add('hidden');
+    
+    // Show the requested page
+    if (pageId === 'landingPage' || pageId === 'authPage') {
+        document.getElementById(pageId).classList.remove('hidden');
+    } else {
+        document.getElementById('mainApp').classList.remove('hidden');
+        // Hide all app pages
+        document.getElementById('profilePage').classList.add('hidden');
+        document.getElementById('matchesPage').classList.add('hidden');
+        document.getElementById('chatsPage').classList.add('hidden');
+        document.getElementById('chatPage').classList.add('hidden');
+        
+        // Show the requested app page
+        document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    // If showing matches page, render matches
+    if (pageId === 'matchesPage') {
+        renderMatches();
+    } else if (pageId === 'chatsPage') {
+        loadChatSessions();
+    }
+    
+    // Close mobile sidebar when navigating
+    if (window.innerWidth < 768) {
+        document.getElementById('sidebar').classList.add('-translate-x-full');
+    }
+}
+
+function showAuthPage() {
+    showPage('authPage');
+    switchToLogin();
+}
+
+// Authentication functions
+function switchToLogin() {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('signupForm').classList.add('hidden');
+    document.getElementById('loginTab').classList.add('text-primary', 'border-primary');
+    document.getElementById('loginTab').classList.remove('text-gray-500', 'dark:text-gray-400');
+    document.getElementById('signupTab').classList.add('text-gray-500', 'dark:text-gray-400');
+    document.getElementById('signupTab').classList.remove('text-primary', 'border-primary');
+}
+
+function switchToSignup() {
+    document.getElementById('signupForm').classList.remove('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('signupTab').classList.add('text-primary', 'border-primary');
+    document.getElementById('signupTab').classList.remove('text-gray-500', 'dark:text-gray-400');
+    document.getElementById('loginTab').classList.add('text-gray-500', 'dark:text-gray-400');
+    document.getElementById('loginTab').classList.remove('text-primary', 'border-primary');
+}
+
+async function login() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!email || !password) {
+        alert('Please enter both email and password.');
+        return;
+    }
+    
+    try {
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Get user data from Firestore
+        const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+        
+        if (userDoc.exists) {
+            currentUser = {
+                id: user.uid,
+                ...userDoc.data()
+            };
+            
+            if (currentUser.profileCompleted) {
+                // Get ML matches from backend
+                await getMLMatches();
+                showPage('matchesPage');
+            } else {
+                showPage('profilePage');
+            }
+        } else {
+            alert('User data not found.');
+        }
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed: ' + error.message);
+    }
+}
+
+async function signup() {
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+    
+    if (!name || !email || !password || !confirmPassword) {
+        alert('Please fill in all fields.');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+    }
+    
+    try {
+        // Create user in Firebase Authentication
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Save user data to Firestore
+        await firebase.firestore().collection('users').doc(user.uid).set({
+            name: name,
+            email: email,
+            profileCompleted: false,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        currentUser = {
+            id: user.uid,
+            name: name,
+            email: email,
+            profileCompleted: false
+        };
+        
+        showPage('profilePage');
+        
+    } catch (error) {
+        console.error('Signup error:', error);
+        alert('Signup failed: ' + error.message);
+    }
+}
+
+async function getUserData(userId) {
+    try {
+        const userDoc = await firebase.firestore().collection('users').doc(userId).get();
+        
+        if (userDoc.exists) {
+            currentUser = {
+                id: userId,
+                ...userDoc.data()
+            };
+            
+            if (currentUser.profileCompleted) {
+                // Get ML matches from backend
+                await getMLMatches();
+                showPage('matchesPage');
+            } else {
+                showPage('profilePage');
+            }
+        }
+    } catch (error) {
+        console.error('Error getting user data:', error);
+    }
+}
+
+function logout() {
+    firebase.auth().signOut().then(() => {
+        currentUser = null;
+        mlMatches = [];
+        showPage('landingPage');
+    });
+}
+
+// Profile functions
+async function saveProfile() {
+    const name = document.getElementById('full-name').value;
+    const age = document.getElementById('age').value;
+    const location = document.getElementById('location').value;
+    const destination = document.getElementById('destination').value;
+    const travelDate = document.getElementById('travel-date').value;
+    const travelStyle = document.getElementById('travel-style').value;
+    const interests = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(i => i.value);
+    const bio = document.getElementById('short-bio').value;
+    
+    if (!name || !age || !location || !destination || !travelDate || !travelStyle || interests.length === 0 || !bio) {
+        alert('Please fill in all fields.');
+        return;
+    }
+    
+    try {
+        // Update user profile in Firestore
+        await firebase.firestore().collection('users').doc(currentUser.id).update({
+            profile: {
+                name,
+                age: parseInt(age),
+                location,
+                destination,
+                travelDate,
+                travelStyle,
+                interests,
+                bio
+            },
+            profileCompleted: true,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Update current user data
+        currentUser.profile = {
+            name,
+            age: parseInt(age),
+            location,
+            destination,
+            travelDate,
+            travelStyle,
+            interests,
+            bio
+        };
+        currentUser.profileCompleted = true;
+        
+        // Get ML-based matches from backend
+        await getMLMatches();
+        
+        showPage('matchesPage');
+        
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        alert('Error saving profile: ' + error.message);
+    }
+}
+
+// Get ML matches from backend
+async function getMLMatches(filterType = 'all') {
+    try {
+        if (!currentUser.profile) return;
+        
+        const profileData = {
+            destination: currentUser.profile.destination,
+            travel_style: currentUser.profile.travelStyle,
+            hobbies: currentUser.profile.interests.join(', '),
+            filter_type: filterType,
+            travel_date: currentUser.profile.travelDate
+        };
+        
+        console.log(`🔄 Fetching matches for filter: ${filterType}`, profileData);
+        
+        const response = await fetch('http://localhost:8000/match', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(profileData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to get matches from server');
+        }
+        
+        const data = await response.json();
+        mlMatches = data.matches || [];
+        
+        console.log(`✅ Received ${mlMatches.length} matches from backend for ${filterType}:`, mlMatches);
+        
+        // Convert to frontend format
+        allMatches = convertMLMatches(mlMatches, currentUser.profile.destination);
+        
+        return allMatches;
+        
+    } catch (error) {
+        console.error('❌ Error getting ML matches:', error);
+        mlMatches = [];
+        // Generate sample matches based on filter type
+        allMatches = generateSampleMatches(currentUser?.profile?.destination || "Goa, India", currentFilter);
+        return allMatches;
+    }
+}
+
+// Generate sample matches based on filter type
+function generateSampleMatches(userDestination = "Goa, India", filterType = "all") {
+    const indianNames = ["Aarav Sharma", "Priya Patel", "Rohan Singh", "Ananya Gupta", "Neha Kumar"];
+    const internationalNames = ["Michael Brown", "Sophie Turner", "David Lee", "Emma Wilson", "James Smith"];
+    
+    let matches = [];
+    
+    if (filterType === "all") {
+        // 10 Indian + 10 International = 20 total
+        for (let i = 1; i <= 10; i++) {
+            // Indian profiles
+            matches.push({
+                id: i,
+                name: indianNames[i % indianNames.length],
+                age: 25 + (i % 10),
+                location: "India",
+                destination: userDestination,
+                travelDate: `2025-11-${10 + i}`,
+                style: "Adventurer",
+                interests: ["Travel", "Culture"],
+                bio: `Indian traveler exploring ${userDestination}`,
+                img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                compatibility: 80 + (i % 20)
+            });
+            
+            // International profiles
+            matches.push({
+                id: i + 10,
+                name: internationalNames[i % internationalNames.length],
+                age: 30 + (i % 10),
+                location: i % 2 === 0 ? "USA" : "UK",
+                destination: userDestination,
+                travelDate: `2025-11-${15 + i}`,
+                style: "Explorer",
+                interests: ["Adventure", "Photography"],
+                bio: `International traveler visiting ${userDestination}`,
+                img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                compatibility: 75 + (i % 25)
+            });
+        }
+    }
+    else if (filterType === "destination") {
+        // Only 10 same destination matches
+        for (let i = 1; i <= 10; i++) {
+            matches.push({
+                id: i,
+                name: i <= 5 ? indianNames[i % indianNames.length] : internationalNames[i % internationalNames.length],
+                age: 25 + (i % 15),
+                location: i <= 5 ? "India" : (i % 2 === 0 ? "USA" : "UK"),
+                destination: userDestination,
+                travelDate: `2025-11-${10 + i}`,
+                style: i % 2 === 0 ? "Adventurer" : "Cultural",
+                interests: i <= 5 ? ["Local Culture", "Food"] : ["Photography", "Adventure"],
+                bio: `Traveling to ${userDestination} - looking for travel buddies!`,
+                img: i <= 5 ? 
+                    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" :
+                    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                compatibility: 85 + (i % 15)
+            });
+        }
+    }
+    else if (filterType === "dates") {
+        // Only 5 same date + same destination matches (most compatible)
+        const userDate = currentUser?.profile?.travelDate || "2025-11-15";
+        for (let i = 1; i <= 5; i++) {
+            matches.push({
+                id: i,
+                name: indianNames[i % indianNames.length],
+                age: 26 + (i % 10),
+                location: "India",
+                destination: userDestination,
+                travelDate: userDate,
+                style: "Perfect Match",
+                interests: ["Same Destination", "Same Dates", "High Compatibility"],
+                bio: `Perfect match! Also traveling to ${userDestination} on ${userDate}`,
+                img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                compatibility: 95 + i
+            });
+        }
+    }
+    
+    return matches;
+}
+
+// Convert backend matches to frontend format
+function convertMLMatches(mlMatches, userDestination = "Goa, India") {
+    console.log("🔄 Converting ML matches:", mlMatches);
+    
+    if (mlMatches.length === 0) {
+        console.log("📭 No ML matches, using sample data");
+        return generateSampleMatches(userDestination, currentFilter);
+    }
+    
+    const placeholderImages = [
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+    ];
+    
+    return mlMatches.map((match, index) => {
+        // Use start_date as travelDate, or generate random if not available
+        let travelDate = match.Start_date || match['Start date'];
+        if (!travelDate) {
+            const randomDays = Math.floor(Math.random() * 60) + 1;
+            const date = new Date();
+            date.setDate(date.getDate() + randomDays);
+            travelDate = date.toISOString().split('T')[0];
+        }
+        
+        // Ensure interests is an array
+        let interests = match.Interests;
+        if (typeof interests === 'string') {
+            interests = interests.split(',');
+        } else if (!interests || !Array.isArray(interests)) {
+            interests = ['Travel', 'Adventure'];
+        }
+        
+        return {
+            id: index + 1,
+            name: match['Traveler name'] || 'Travel Buddy',
+            age: match['Traveler age'] || 25 + (index % 15),
+            location: match['Traveler nationality'] || 'India',
+            destination: match.Destination || userDestination,
+            travelDate: travelDate,
+            style: match['Travel style'] || 'Adventurer',
+            interests: interests,
+            bio: `Traveling from ${match['Traveler nationality'] || 'India'}. ${match['Accommodation type'] ? 'Staying at: ' + match['Accommodation type'] : ''}`,
+            img: placeholderImages[index % placeholderImages.length],
+            compatibility: match.compatibility || 70 + (index * 5)
+        };
+    });
+}
+
+// Filter matches function
+async function filterMatches(filterType) {
+    console.log(`🎯 Applying filter: ${filterType}`);
+    
+    currentFilter = filterType;
+    
+    // Update UI - REMOVE STYLE FILTER
+    document.querySelectorAll('[id^="filter"]').forEach(btn => {
+        btn.classList.remove('active-filter', 'bg-primary', 'text-white');
+        btn.classList.add('bg-gray-200', 'dark:bg-gray-700');
+    });
+    
+    const activeBtn = document.getElementById(`filter${filterType.charAt(0).toUpperCase() + filterType.slice(1)}`);
+    if (activeBtn) {
+        activeBtn.classList.add('active-filter', 'bg-primary', 'text-white');
+        activeBtn.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+    }
+    
+    // Get matches from backend with the selected filter
+    const filteredMatches = await getMLMatches(filterType);
+    
+    console.log(`📊 Rendering ${filteredMatches.length} matches for filter: ${filterType}`);
+    renderFilteredMatches(filteredMatches);
+}
+
+// Render matches
+function renderFilteredMatches(matches) {
+    const container = document.getElementById('matchProfiles');
+    container.innerHTML = '';
+    
+    console.log(`🎨 Rendering ${matches.length} matches`);
+    
+    if (matches.length === 0) {
+        let message = 'No matches found yet';
+        if (currentFilter === 'destination') {
+            message = 'No travelers found going to your destination';
+        } else if (currentFilter === 'dates') {
+            message = 'No travelers found with matching travel dates';
+        }
+        
+        container.innerHTML = `
+            <div class="col-span-3 text-center py-12">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 class="text-xl font-semibold mb-2">${message}</h3>
+                <p class="text-gray-600 dark:text-gray-400">Try adjusting your preferences or check back later.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    matches.forEach((match, index) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden fade-in';
+        
+        const daysUntilTravel = match.travelDate ? calculateDaysUntilTravel(match.travelDate) : null;
+        
+        card.innerHTML = `
+            <div class="relative">
+                <img src="${match.img}" alt="${match.name}" class="match-image"/>
+                <div class="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
+                    ${match.compatibility}% Match
+                </div>
+                ${daysUntilTravel !== null ? `
+                <div class="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    ${daysUntilTravel}d
+                </div>
+                ` : ''}
+            </div>
+            <div class="p-4">
+                <div class="flex justify-between items-start mb-2">
+                    <h2 class="text-xl font-semibold">${match.name}${match.age ? ', ' + match.age : ''}</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
+                    ${match.location}
+                </p>
+                <p class="text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Traveling to: ${match.destination}
+                </p>
+                ${match.travelDate ? `
+                <p class="text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    ${new Date(match.travelDate).toLocaleDateString()}
+                </p>
+                ` : ''}
+                ${match.style ? `
+                <p class="text-gray-600 dark:text-gray-400 mb-2">
+                    <span class="font-medium">Style:</span> ${match.style}
+                </p>
+                ` : ''}
+                ${match.interests && match.interests.length > 0 ? `
+                <p class="text-gray-600 dark:text-gray-400 mb-3">
+                    <span class="font-medium">Interests:</span> ${Array.isArray(match.interests) ? match.interests.join(', ') : match.interests}
+                </p>
+                ` : ''}
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">${match.bio}</p>
+                <div class="flex gap-2">
+                    <button onclick="startChatWithMatch(${match.id}, '${match.name.replace(/'/g, "\\'")}')" class="flex-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 font-medium">Chat</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Calculate days until travel
+function calculateDaysUntilTravel(travelDate) {
+    const today = new Date();
+    const travel = new Date(travelDate);
+    const diffTime = travel - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 0;
+}
+
+// Initialize when matches page loads
+async function renderMatches() {
+    console.log("🚀 Initializing matches page");
+    await getMLMatches('all');
+    filterMatches('all');
+}
+
+// SIMPLIFIED CHAT FUNCTIONS - NO WEBSOCKET, PURELY FRONTEND
+function initializeChat() {
+    console.log('Chat initialized with auto-responses');
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const chatBox = document.getElementById('chatBox');
+    const typingDiv = document.createElement('div');
+    typingDiv.id = 'typing-indicator';
+    typingDiv.className = 'mb-4 flex items-center gap-2';
+    typingDiv.innerHTML = `
+        <div class="inline-block bg-gray-200 dark:bg-gray-700 rounded-lg px-4 py-2">
+            <div class="flex gap-1">
+                <div class="message-typing"></div>
+                <div class="message-typing" style="animation-delay: 0.2s"></div>
+                <div class="message-typing" style="animation-delay: 0.4s"></div>
+            </div>
+        </div>
+    `;
+    chatBox.appendChild(typingDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const typingIndicator = document.getElementById('typing-indicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+// Auto-response messages based on user input
+function generateAutoResponse(userMessage) {
+    const message = userMessage.toLowerCase();
+    
+    // Greeting patterns
+    if (message.match(/(hi|hello|hey|hola|namaste)/)) {
+        return "Hello! I'm excited to plan our trip together!";
+    }
+    
+    // Travel planning patterns
+    if (message.match(/(travel|trip|journey|vacation)/)) {
+        if (message.match(/(when|date|time)/)) {
+            return "I'm flexible with dates! What works best for you?";
+        }
+        if (message.match(/(where|destination|place|location)/)) {
+            return "I'm open to suggestions! Which destination are you most excited about?";
+        }
+        if (message.match(/(budget|cost|price|money)/)) {
+            return "I'm comfortable with mid-range budgets. How about you?";
+        }
+    }
+    
+    // Accommodation patterns
+    if (message.match(/(hotel|stay|accommodation|hostel|airbnb)/)) {
+        return "I prefer comfortable but affordable stays. Do you have any preferences?";
+    }
+    
+    // Activities patterns
+    if (message.match(/(do|activity|things to do|sightseeing|tour)/)) {
+        return "I love exploring local culture and trying new foods! What activities interest you?";
+    }
+    
+    // Food patterns
+    if (message.match(/(food|eat|restaurant|cuisine|dinner|lunch)/)) {
+        return "I enjoy trying local cuisine! Are you adventurous with food?";
+    }
+    
+    // Default responses
+    const defaultResponses = [
+        "That sounds great! I'm really looking forward to our trip.",
+        "Interesting! Tell me more about that.",
+        "I think that could work well for our travel plans.",
+        "Thanks for sharing! I'm excited to collaborate on this journey.",
+        "That's a good point! Let me think about how we can incorporate that.",
+        "I'm flexible and open to suggestions! What do you think?",
+        "Sounds like a plan! I'm getting excited about our adventure.",
+        "I appreciate you reaching out! Let's make this an amazing trip."
+    ];
+    
+    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+}
+
+// Simulate incoming message from the other user
+function simulateIncomingMessage(message) {
+    if (!currentChatWith) return;
+    
+    // Add typing indicator
+    showTypingIndicator();
+    
+    // Send the auto-response after typing delay
+    setTimeout(() => {
+        hideTypingIndicator();
+        // Add auto-response message directly to UI
+        addMessageToChat(currentChatWith.id, message, new Date().toISOString(), false);
+    }, 1500 + Math.random() * 2000); // Typing delay
+}
+
+// Add message to chat UI
+function addMessageToChat(senderId, message, timestamp, isOwnMessage) {
+    const chatBox = document.getElementById('chatBox');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `mb-4 ${isOwnMessage ? 'text-right' : ''}`;
+    
+    const time = new Date(timestamp).toLocaleTimeString([], { 
+        hour: '2-digit', minute: '2-digit' 
+    });
+    
+    messageDiv.innerHTML = `
+        <div class="inline-block max-w-xs md:max-w-md rounded-lg px-4 py-2 ${
+            isOwnMessage ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'
+        }">
+            <p>${message}</p>
+            <p class="text-xs mt-1 opacity-70">${time}</p>
+        </div>
+    `;
+    
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Load chat history - SIMPLIFIED
+async function loadChatHistory(otherUserId) {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = '';
+    
+    // Add a welcome message when chat starts
+    addMessageToChat(otherUserId, "Hi there! I'm excited to connect with you about our travel plans. Where are you thinking of going?", new Date().toISOString(), false);
+}
+
+// Get user chat sessions - SIMPLIFIED
+async function loadChatSessions() {
+    const chatsList = document.getElementById('chatsList');
+    chatsList.innerHTML = '';
+    
+    // Show a simple message since we don't have real chat sessions
+    chatsList.innerHTML = `
+        <div class="p-8 text-center text-gray-500 dark:text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <p>No conversations yet</p>
+            <p class="text-sm mt-2">Start chatting with your travel matches!</p>
+        </div>
+    `;
+}
+
+// Start chat with a match
+function startChatWithMatch(matchId, matchName) {
+    currentChatWith = {
+        id: matchId.toString(),
+        name: matchName
+    };
+    
+    // Set chat user info
+    document.getElementById('chatUserName').textContent = matchName;
+    document.getElementById('chatUserInfo').textContent = `Travel Buddy Match`;
+    
+    // Load chat history (simplified)
+    loadChatHistory(matchId.toString());
+    
+    showPage('chatPage');
+}
+
+// Start chat with a user (from chat sessions)
+function startChatWithUser(userId, userName) {
+    currentChatWith = {
+        id: userId,
+        name: userName || `User ${userId}`
+    };
+    
+    // Set chat user info
+    document.getElementById('chatUserName').textContent = currentChatWith.name;
+    document.getElementById('chatUserInfo').textContent = `Travel Buddy`;
+    
+    // Load chat history (simplified)
+    loadChatHistory(userId);
+    
+    showPage('chatPage');
+}
+
+// Send message function - SIMPLIFIED
+function sendMessage() {
+    if (!currentChatWith || !document.getElementById('messageInput')) return;
+    
+    const input = document.getElementById('messageInput');
+    const messageText = input.value.trim();
+    
+    if (!messageText) return;
+    
+    // Add user message to UI immediately
+    addMessageToChat(currentUser.id, messageText, new Date().toISOString(), true);
+    
+    // Clear input
+    input.value = '';
+    
+    // Generate and send auto-response after a short delay
+    setTimeout(() => {
+        const autoResponse = generateAutoResponse(messageText);
+        simulateIncomingMessage(autoResponse);
+    }, 2000 + Math.random() * 3000); // Random delay between 2-5 seconds
+}
+</script>
+</body>
+</html>
